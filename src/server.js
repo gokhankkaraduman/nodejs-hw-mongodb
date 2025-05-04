@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pino from "pino-http";
 import contactRouter from "./routers/contacts.js";
+import errorHandler from "./middlewares/errorHandler.js"; 
+import notFoundHandler from "./middlewares/notFoundHandler.js";
 
 dotenv.config(); 
 
@@ -32,10 +34,9 @@ const startServer = () => {
     app.use("/contacts", contactRouter);
 
     // 404 error handling
-    app.use((req, res) => {
-        res.status(404).json({message:"404 Not Found"});
-    })
-
+    app.use(notFoundHandler);
+    // Error handling middleware
+    app.use(errorHandler);
 
     app.listen(PORT, () => {
     console.log("localhost:Server is running on ", "http://localhost:3000");
