@@ -2,16 +2,19 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import pino from "pino-http";
-import { getContacts, getContactById } from "./controllers/contact.js";
+import contactRouter from "./routers/contacts.js";
 
-const setupServer = () => {
-    dotenv.config();
+dotenv.config(); 
+
+const startServer = () => {
+
     const app = express();
 
     const PORT = process.env.PORT || 3000;
     // Middleware
     app.use(express.json());
     app.use(cors());
+
     // Pino logger middleware
     app.use(
         pino({
@@ -25,10 +28,8 @@ const setupServer = () => {
         req.log.info("Ana sayfa ziyaret edildi"); // log örneği
         res.send("Merhaba Express!");
     });
-    
-    app.get("/contacts", getContacts);
-
-    app.get("/contacts/:id", getContactById);
+    app.use("/contacts", contactRouter);
+    app.use("/contacts", contactRouter);
 
     // 404 error handling
     app.use((req, res) => {
@@ -37,9 +38,8 @@ const setupServer = () => {
 
 
     app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log('localhost:3000', 'http://localhost:3000');
+    console.log("localhost:Server is running on ", "http://localhost:3000");
     });
 };
 
-export { setupServer };
+export { startServer };
