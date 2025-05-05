@@ -31,7 +31,6 @@ const startServer = () => {
         res.send("Merhaba Express!");
     });
     app.use("/contacts", contactRouter);
-    app.use("/contacts", contactRouter);
 
     // 404 error handling
     app.use(notFoundHandler);

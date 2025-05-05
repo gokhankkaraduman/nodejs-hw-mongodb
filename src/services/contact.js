@@ -14,12 +14,37 @@ const createContact = async (contactData) => {
   const newContact = await Contacts.create(contactData);
   return newContact;
 };
-const updateContact = async (contactId, contactData) => {
-  const updatedContact = await Contacts.findByIdAndUpdate(contactId, contactData, { new: true });
+const updateContactByPut = async (contactId, contactData, options={}) => {
+  const updatedContact = await Contacts.findByIdAndUpdate(
+    contactId,
+    contactData,
+    { new: true,
+    includeResultMetadata: true,
+    ...options, }
+  );
+  return {updatedContact , isNew: Boolean(updatedContact?.lastErrorObject?.updatedExisting)};
+};
+ 
+const updateContactByPatch = async (contactId, contactData) => {
+  const updatedContact = await Contacts.findByIdAndUpdate(
+    contactId,
+    { $set: contactData },
+    { new: true }
+  );
   return updatedContact;
 };
+
 const deleteContact = async (contactId) => {
+  console.log("Deleting contact with ID:", contactId);
   const deletedContact = await Contacts.findByIdAndDelete(contactId);
+  console.log("Deleted contact:", deletedContact);
   return deletedContact;
 };
-export { getAllContacts, getContactById, createContact, updateContact, deleteContact };
+export {
+  getAllContacts,
+  getContactById,
+  createContact,
+  updateContactByPut,
+  updateContactByPatch,
+  deleteContact,
+};
