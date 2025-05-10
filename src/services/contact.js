@@ -19,6 +19,8 @@ const updateContactByPut = async (contactId, contactData, options={}) => {
     contactId,
     contactData,
     { new: true,
+      upsert: true,
+      rawResult: true,
     includeResultMetadata: true,
     ...options, }
   );

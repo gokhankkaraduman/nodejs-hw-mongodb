@@ -18,7 +18,7 @@ const contactSchema = new Schema({
     },
     contactType:{
         type:String,
-        enum:['work','home','personal'],
+        enum:['other','work','personal'],
         default:'personel',
         required:true
     }
