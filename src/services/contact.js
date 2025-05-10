@@ -1,15 +1,36 @@
+import { SORT_ORDER } from "../constant/constantContact.js";
 import Contacts from "../db/models/contact.js";
 import { calculatePaginationData } from "../utils/calculatePaginationData.js";
 
 const getAllContacts = async ({
-  page=1,
-  limit=10,
+  page = 1,
+  limit = 10,
+  sortBy = "_id",
+  sortOrder = SORT_ORDER.ASC,
+  filter = {},
 }) => {
-  const perPage= Number(limit);
-  const skip = (page - 1) * limit;
+  const perPage = Number(limit);
+  const skip = (page - 1) * perPage; // Fixed - was using limit variable instead of perPage
 
-  const contacts = await Contacts.find().skip(skip).limit(perPage);
-  const totalContacts = await Contacts.countDocuments();
+  const contactQuery = Contacts.find();
+
+  // Apply filters correctly
+  if (filter.contactType) {
+    contactQuery.where("contactType").equals(filter.contactType);
+  }
+
+  if (filter.isFavourite !== undefined) {
+    contactQuery.where("isFavourite").equals(filter.isFavourite);
+  }
+
+  const totalContacts = await contactQuery.clone().countDocuments();
+
+  const contacts = await contactQuery
+    .skip(skip)
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+
   const pagination = calculatePaginationData(totalContacts, page, limit);
 
   return {
@@ -17,6 +38,7 @@ const getAllContacts = async ({
     pagination,
   };
 };
+
 
 const getContactById = async (contactId) => {
   const contact = await Contacts.findById(contactId);
